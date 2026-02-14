@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import time
 
 import requests
 
@@ -71,8 +72,17 @@ Return ONLY the tweet text, nothing else."""
         "contents": [{"parts": [{"text": prompt}]}]
     }
 
-    resp = requests.post(url, json=payload, timeout=30)
-    resp.raise_for_status()
+    max_retries = 4
+    backoff = 5
+    for attempt in range(max_retries + 1):
+        resp = requests.post(url, json=payload, timeout=30)
+        if resp.status_code == 429 and attempt < max_retries:
+            wait = backoff * (2 ** attempt)
+            print(f"Rate limited (429). Retrying in {wait}s... (attempt {attempt + 1}/{max_retries})")
+            time.sleep(wait)
+            continue
+        resp.raise_for_status()
+        break
     data = resp.json()
 
     tweet_text = data["candidates"][0]["content"]["parts"][0]["text"].strip().strip('"')
