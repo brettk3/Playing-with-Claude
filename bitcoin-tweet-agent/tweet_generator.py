@@ -2,7 +2,7 @@ import json
 import os
 import random
 
-import anthropic
+import google.generativeai as genai
 
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "tweet_history.json")
 
@@ -41,8 +41,9 @@ def add_to_history(tweet):
 
 
 def generate_tweet(history):
-    """Generate a unique Bitcoin tweet using the Claude API."""
-    client = anthropic.Anthropic()
+    """Generate a unique Bitcoin tweet using the Google Gemini API."""
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+    model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-2.0-flash"))
 
     topic = random.choice(TOPICS)
 
@@ -65,13 +66,9 @@ Rules:
 
 Return ONLY the tweet text, nothing else."""
 
-    message = client.messages.create(
-        model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
-        max_tokens=100,
-        messages=[{"role": "user", "content": prompt}],
-    )
+    response = model.generate_content(prompt)
 
-    tweet_text = message.content[0].text.strip().strip('"')
+    tweet_text = response.text.strip().strip('"')
 
     # Truncate if over 280 characters
     return tweet_text[:280]

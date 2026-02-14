@@ -2,10 +2,19 @@
 
 An automated agent that tweets about Bitcoin 5 times per day using AI-generated content.
 
-- **Tweet generation**: Claude API (Anthropic) generates unique, varied tweets
+- **Tweet generation**: Google Gemini API (free tier) generates unique, varied tweets
 - **Posting**: Twitter/X API v2 via tweepy
 - **Scheduling**: Configurable times, defaults to 8am, 11am, 2pm, 5pm, 8pm
 - **Deduplication**: Recent tweet history fed into prompts to avoid repetition
+
+## Getting a Free Gemini API Key
+
+1. Go to https://aistudio.google.com/apikey
+2. Sign in with your Google account
+3. Click **"Create API Key"**
+4. Copy the key into your `.env` file
+
+The free tier includes 15 requests per minute — more than enough for 5 tweets per day.
 
 ## Getting Twitter API Credentials
 
@@ -42,7 +51,7 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your real API keys
 
-# 4. Test tweet generation (optional, only needs ANTHROPIC_API_KEY)
+# 4. Test tweet generation (optional, only needs GEMINI_API_KEY)
 python3 -c "
 from dotenv import load_dotenv; load_dotenv('.env')
 from tweet_generator import generate_tweet, load_history
@@ -72,12 +81,12 @@ All configuration is via environment variables in `.env`:
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
-| `ANTHROPIC_API_KEY` | Yes | — | Your Anthropic API key |
+| `GEMINI_API_KEY` | Yes | — | Your Google Gemini API key (free) |
 | `TWITTER_API_KEY` | Yes | — | Twitter OAuth consumer key |
 | `TWITTER_API_SECRET` | Yes | — | Twitter OAuth consumer secret |
 | `TWITTER_ACCESS_TOKEN` | Yes | — | Twitter OAuth access token |
 | `TWITTER_ACCESS_TOKEN_SECRET` | Yes | — | Twitter OAuth access token secret |
-| `CLAUDE_MODEL` | No | `claude-sonnet-4-20250514` | Claude model to use |
+| `GEMINI_MODEL` | No | `gemini-2.0-flash` | Gemini model to use |
 | `TWEET_TIMES` | No | `08:00,11:00,14:00,17:00,20:00` | Comma-separated 24h times |
 | `HISTORY_SIZE` | No | `100` | Max tweets stored in history |
 
