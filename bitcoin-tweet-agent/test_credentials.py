@@ -1,6 +1,6 @@
 """Quick credential validation for the Bitcoin Tweet Agent.
 
-Run:  python test_credentials.py
+Run:  python3 test_credentials.py
 """
 
 import os
@@ -8,62 +8,59 @@ import sys
 
 import requests
 from dotenv import load_dotenv
+from requests_oauthlib import OAuth1
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 
 def test_twitter():
     print("=== Twitter API ===")
-    required = {
-        "TWITTER_API_KEY": os.getenv("TWITTER_API_KEY"),
-        "TWITTER_API_SECRET": os.getenv("TWITTER_API_SECRET"),
-        "TWITTER_ACCESS_TOKEN": os.getenv("TWITTER_ACCESS_TOKEN"),
-        "TWITTER_ACCESS_TOKEN_SECRET": os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
+    api_key = os.getenv("TWITTER_API_KEY", "")
+    api_secret = os.getenv("TWITTER_API_SECRET", "")
+    access_token = os.getenv("TWITTER_ACCESS_TOKEN", "")
+    access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET", "")
+
+    keys = {
+        "TWITTER_API_KEY": api_key,
+        "TWITTER_API_SECRET": api_secret,
+        "TWITTER_ACCESS_TOKEN": access_token,
+        "TWITTER_ACCESS_TOKEN_SECRET": access_token_secret,
     }
 
-    missing = [k for k, v in required.items() if not v]
+    missing = [k for k, v in keys.items() if not v]
     if missing:
-        print(f"FAIL: Missing env vars: {', '.join(missing)}")
+        print(f"  FAIL: Missing env vars: {', '.join(missing)}")
         return False
 
-    # Print masked keys for debugging
-    for k, v in required.items():
+    for k, v in keys.items():
         print(f"  {k}: {v[:5]}...{v[-5:]}")
-    print("  All 4 env vars are set.")
 
-    # Note: The pay-per-use plan does NOT support read endpoints like get_me().
-    # We test by posting a tweet and immediately deleting it.
-    import tweepy
+    # Use raw requests + OAuth1 to get the full error response
+    auth = OAuth1(api_key, api_secret, access_token, access_token_secret)
 
-    client = tweepy.Client(
-        consumer_key=required["TWITTER_API_KEY"],
-        consumer_secret=required["TWITTER_API_SECRET"],
-        access_token=required["TWITTER_ACCESS_TOKEN"],
-        access_token_secret=required["TWITTER_ACCESS_TOKEN_SECRET"],
+    print("\n  Attempting to post a test tweet...")
+    resp = requests.post(
+        "https://api.twitter.com/2/tweets",
+        json={"text": "Test tweet - will be deleted immediately"},
+        auth=auth,
+        timeout=15,
     )
 
-    try:
-        # Post a test tweet
-        response = client.create_tweet(text="Test tweet - please ignore (will be deleted)")
-        tweet_id = response.data["id"]
-        print(f"  OK: Successfully posted test tweet (ID: {tweet_id})")
+    print(f"  Status: {resp.status_code}")
+    print(f"  Response: {resp.text[:500]}")
 
-        # Immediately delete it
-        client.delete_tweet(tweet_id)
-        print(f"  OK: Deleted test tweet.")
+    if resp.status_code in (200, 201):
+        tweet_id = resp.json()["data"]["id"]
+        print(f"  OK: Tweet posted (ID: {tweet_id}). Deleting...")
+        del_resp = requests.delete(
+            f"https://api.twitter.com/2/tweets/{tweet_id}",
+            auth=auth,
+            timeout=15,
+        )
+        print(f"  Delete status: {del_resp.status_code}")
         return True
-    except tweepy.Unauthorized:
-        print("  FAIL: 401 Unauthorized.")
-        print("  -> Check that your API plan is active at developer.x.com -> Dashboard.")
-        print("  -> Regenerate all 4 keys and update .env.")
-        return False
-    except tweepy.Forbidden:
-        print("  FAIL: 403 Forbidden.")
-        print("  -> Your app may lack Read/Write permissions.")
-        print("  -> Check developer.x.com -> App Settings -> User authentication.")
-        return False
-    except Exception as e:
-        print(f"  FAIL: {e}")
+    else:
+        print("  FAIL: Could not post tweet.")
         return False
 
 
