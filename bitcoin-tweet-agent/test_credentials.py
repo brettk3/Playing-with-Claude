@@ -28,7 +28,8 @@ def test_twitter():
 
     print("  All 4 env vars are set.")
 
-    # Use tweepy to call GET /2/users/me
+    # Note: The pay-per-use plan does NOT support read endpoints like get_me().
+    # We test by posting a tweet and immediately deleting it.
     import tweepy
 
     client = tweepy.Client(
@@ -39,18 +40,19 @@ def test_twitter():
     )
 
     try:
-        me = client.get_me()
-        if me.data:
-            print(f"  OK: Authenticated as @{me.data.username} (id: {me.data.id})")
-            return True
-        else:
-            print("  FAIL: get_me() returned no data.")
-            return False
+        # Post a test tweet
+        response = client.create_tweet(text="Test tweet - please ignore (will be deleted)")
+        tweet_id = response.data["id"]
+        print(f"  OK: Successfully posted test tweet (ID: {tweet_id})")
+
+        # Immediately delete it
+        client.delete_tweet(tweet_id)
+        print(f"  OK: Deleted test tweet.")
+        return True
     except tweepy.Unauthorized:
         print("  FAIL: 401 Unauthorized.")
-        print("  -> Make sure you have subscribed to a Twitter API plan (even Free).")
-        print("  -> Go to developer.x.com -> Dashboard and check your plan status.")
-        print("  -> Then regenerate your keys and update .env.")
+        print("  -> Check that your API plan is active at developer.x.com -> Dashboard.")
+        print("  -> Regenerate all 4 keys and update .env.")
         return False
     except tweepy.Forbidden:
         print("  FAIL: 403 Forbidden.")
