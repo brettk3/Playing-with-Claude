@@ -2,7 +2,7 @@ import json
 import os
 import random
 
-import google.generativeai as genai
+import requests
 
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "tweet_history.json")
 
@@ -41,9 +41,9 @@ def add_to_history(tweet):
 
 
 def generate_tweet(history):
-    """Generate a unique Bitcoin tweet using the Google Gemini API."""
-    genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-    model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-2.0-flash"))
+    """Generate a unique Bitcoin tweet using the Google Gemini REST API."""
+    api_key = os.getenv("GEMINI_API_KEY")
+    model_name = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
     topic = random.choice(TOPICS)
 
@@ -66,9 +66,16 @@ Rules:
 
 Return ONLY the tweet text, nothing else."""
 
-    response = model.generate_content(prompt)
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}]
+    }
 
-    tweet_text = response.text.strip().strip('"')
+    resp = requests.post(url, json=payload, timeout=30)
+    resp.raise_for_status()
+    data = resp.json()
+
+    tweet_text = data["candidates"][0]["content"]["parts"][0]["text"].strip().strip('"')
 
     # Truncate if over 280 characters
     return tweet_text[:280]
