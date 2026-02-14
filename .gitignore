@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Bitcoin tweet agent
+bitcoin-tweet-agent/.env
+bitcoin-tweet-agent/tweet_history.json
+bitcoin-tweet-agent/agent.log
+bitcoin-tweet-agent/venv/
