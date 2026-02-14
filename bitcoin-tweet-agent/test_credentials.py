@@ -26,6 +26,9 @@ def test_twitter():
         print(f"FAIL: Missing env vars: {', '.join(missing)}")
         return False
 
+    # Print masked keys for debugging
+    for k, v in required.items():
+        print(f"  {k}: {v[:5]}...{v[-5:]}")
     print("  All 4 env vars are set.")
 
     # Note: The pay-per-use plan does NOT support read endpoints like get_me().
