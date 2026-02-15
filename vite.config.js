@@ -16,13 +16,12 @@ export default defineConfig(({ mode }) => {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           },
         },
-        '/api/anthropic': {
-          target: 'https://api.anthropic.com',
+        '/api/groq': {
+          target: 'https://api.groq.com',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api\/anthropic/, ''),
+          rewrite: (path) => path.replace(/^\/api\/groq/, ''),
           headers: {
-            'x-api-key': env.ANTHROPIC_API_KEY || '',
-            'anthropic-version': '2023-06-01',
+            Authorization: `Bearer ${env.GROQ_API_KEY || ''}`,
           },
         },
       },

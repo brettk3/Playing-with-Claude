@@ -1,3 +1,5 @@
+import { groqChat } from './groqClient';
+
 export async function analyzeSentiment(stockData) {
   const { symbol, name, isCrypto, currentPrice, dayChangePercent, marketCap,
     trailingPE, forwardPE, priceToBook, returnOnEquity, profitMargins,
@@ -30,9 +32,9 @@ export async function analyzeSentiment(stockData) {
 Here are the current metrics:
 ${metricsBlock}
 
-Respond in this exact JSON format (no markdown, no code fences):
+Respond in this exact JSON format (no markdown, no code fences, just raw JSON):
 {
-  "sentiment": "BULLISH" | "BEARISH" | "NEUTRAL",
+  "sentiment": "BULLISH" or "BEARISH" or "NEUTRAL",
   "confidence": 1-10,
   "summary": "One sentence overall take",
   "reasons": ["reason 1", "reason 2", "reason 3"],
@@ -42,27 +44,6 @@ Respond in this exact JSON format (no markdown, no code fences):
 
 Be specific to this company. Reference actual metrics. Be opinionated.`;
 
-  const res = await fetch('/api/anthropic/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 512,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Anthropic API error (${res.status}): ${text}`);
-  }
-
-  const json = await res.json();
-  const content = json.content?.[0]?.text;
-
-  if (!content) {
-    throw new Error('Empty response from AI');
-  }
-
+  const content = await groqChat(prompt);
   return JSON.parse(content);
 }

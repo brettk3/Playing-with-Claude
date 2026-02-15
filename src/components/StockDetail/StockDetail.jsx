@@ -9,6 +9,7 @@ import {
 } from '../../utils/formatters';
 import MetricCard from '../MetricCard/MetricCard';
 import SentimentPanel from '../SentimentPanel/SentimentPanel';
+import TweetPanel from '../TweetPanel/TweetPanel';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import ErrorState from '../ErrorState/ErrorState';
 import styles from './StockDetail.module.css';
@@ -124,6 +125,7 @@ export default function StockDetail({ symbol, holding }) {
       </div>
 
       <SentimentPanel stockData={data} />
+      <TweetPanel stockData={data} />
     </div>
   );
 }
