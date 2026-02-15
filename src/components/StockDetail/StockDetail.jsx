@@ -8,6 +8,7 @@ import {
   formatChangePercent,
 } from '../../utils/formatters';
 import MetricCard from '../MetricCard/MetricCard';
+import SentimentPanel from '../SentimentPanel/SentimentPanel';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import ErrorState from '../ErrorState/ErrorState';
 import styles from './StockDetail.module.css';
@@ -121,6 +122,8 @@ export default function StockDetail({ symbol, holding }) {
           )}
         </div>
       </div>
+
+      <SentimentPanel stockData={data} />
     </div>
   );
 }
