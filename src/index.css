@@ -21,27 +21,30 @@ body {
 }
 
 :root {
-  --bg-primary: #0f1117;
-  --bg-secondary: #1a1d28;
-  --bg-card: #232734;
-  --bg-card-hover: #2a2f3f;
-  --text-primary: #e8eaed;
-  --text-secondary: #9aa0a6;
-  --text-muted: #5f6368;
-  --accent-blue: #4a9eff;
-  --accent-green: #34a853;
-  --accent-red: #ea4335;
-  --accent-yellow: #fbbc04;
-  --border: #2d3140;
-  --border-light: #383d4f;
+  --bg-primary: #0b0e11;
+  --bg-secondary: #12161c;
+  --bg-card: #1b1f27;
+  --bg-card-hover: #232830;
+  --bg-active: #1e2a3a;
+  --text-primary: #eaecef;
+  --text-secondary: #848e9c;
+  --text-muted: #5e6673;
+  --accent-blue: #2962ff;
+  --accent-green: #0ecb81;
+  --accent-red: #f6465d;
+  --accent-yellow: #f0b90b;
+  --accent-orange: #f7931a;
+  --border: #1e2329;
+  --border-light: #2b3139;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --sidebar-width: 340px;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --sidebar-width: 300px;
+  --topbar-height: 56px;
+  --radius: 8px;
+  --radius-sm: 6px;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -49,10 +52,14 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: var(--border-light);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-light);
+  background: var(--text-muted);
+}
+
+button {
+  font-family: inherit;
 }

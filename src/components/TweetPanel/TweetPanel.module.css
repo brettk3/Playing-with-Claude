@@ -1,6 +1,4 @@
-.panel {
-  margin-top: 36px;
-}
+.panel {}
 
 .title {
   font-size: 16px;
@@ -37,7 +35,7 @@
 .styleBtnActive {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
-  background: rgba(74, 158, 255, 0.08);
+  background: rgba(41, 98, 255, 0.08);
 }
 
 .generateBtn {

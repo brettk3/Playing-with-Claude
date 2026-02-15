@@ -4,7 +4,7 @@ function getBaseUrl() {
   if (import.meta.env.DEV) {
     return '/api/yahoo';
   }
-  return 'https://corsproxy.io/?url=' + encodeURIComponent('https://query1.finance.yahoo.com');
+  return 'https://corsproxy.io/?url=' + encodeURIComponent('https://query2.finance.yahoo.com');
 }
 
 export async function fetchQuoteSummary(symbol) {
