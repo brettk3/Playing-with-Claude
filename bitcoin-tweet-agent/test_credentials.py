@@ -8,23 +8,22 @@ import sys
 
 import requests
 from dotenv import load_dotenv
-from requests_oauthlib import OAuth1
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 
 def test_twitter():
-    print("=== Twitter API ===")
-    api_key = os.getenv("TWITTER_API_KEY", "")
-    api_secret = os.getenv("TWITTER_API_SECRET", "")
+    print("=== Twitter API (OAuth 2.0) ===")
+    client_id = os.getenv("TWITTER_CLIENT_ID", "")
+    client_secret = os.getenv("TWITTER_CLIENT_SECRET", "")
     access_token = os.getenv("TWITTER_ACCESS_TOKEN", "")
-    access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET", "")
+    refresh_token = os.getenv("TWITTER_REFRESH_TOKEN", "")
 
     keys = {
-        "TWITTER_API_KEY": api_key,
-        "TWITTER_API_SECRET": api_secret,
+        "TWITTER_CLIENT_ID": client_id,
+        "TWITTER_CLIENT_SECRET": client_secret,
         "TWITTER_ACCESS_TOKEN": access_token,
-        "TWITTER_ACCESS_TOKEN_SECRET": access_token_secret,
+        "TWITTER_REFRESH_TOKEN": refresh_token,
     }
 
     missing = [k for k, v in keys.items() if not v]
@@ -35,14 +34,11 @@ def test_twitter():
     for k, v in keys.items():
         print(f"  {k}: {v[:5]}...{v[-5:]}")
 
-    # Use raw requests + OAuth1 to get the full error response
-    auth = OAuth1(api_key, api_secret, access_token, access_token_secret)
-
     print("\n  Attempting to post a test tweet...")
     resp = requests.post(
         "https://api.twitter.com/2/tweets",
         json={"text": "Test tweet - will be deleted immediately"},
-        auth=auth,
+        headers={"Authorization": f"Bearer {access_token}"},
         timeout=15,
     )
 
@@ -54,11 +50,14 @@ def test_twitter():
         print(f"  OK: Tweet posted (ID: {tweet_id}). Deleting...")
         del_resp = requests.delete(
             f"https://api.twitter.com/2/tweets/{tweet_id}",
-            auth=auth,
+            headers={"Authorization": f"Bearer {access_token}"},
             timeout=15,
         )
         print(f"  Delete status: {del_resp.status_code}")
         return True
+    elif resp.status_code == 401:
+        print("  Token may be expired. Try refreshing with authorize.py or check your tokens.")
+        return False
     else:
         print("  FAIL: Could not post tweet.")
         return False
