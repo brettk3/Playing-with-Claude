@@ -1,5 +1,3 @@
-const MODULES = 'price,summaryDetail,defaultKeyStatistics,financialData';
-
 function getBaseUrl() {
   if (import.meta.env.DEV) {
     return '/api/yahoo';
@@ -9,7 +7,7 @@ function getBaseUrl() {
 
 export async function fetchQuoteSummary(symbol) {
   const base = getBaseUrl();
-  const url = `${base}/v10/finance/quoteSummary/${encodeURIComponent(symbol)}?modules=${MODULES}`;
+  const url = `${base}/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
 
   const res = await fetch(url);
   if (!res.ok) {
@@ -18,64 +16,73 @@ export async function fetchQuoteSummary(symbol) {
 
   const json = await res.json();
 
-  if (json.quoteSummary?.error) {
-    throw new Error(json.quoteSummary.error.description || `No data for ${symbol}`);
+  if (json.chart?.error) {
+    throw new Error(json.chart.error.description || `No data for ${symbol}`);
   }
 
-  const result = json.quoteSummary?.result?.[0];
+  const result = json.chart?.result?.[0];
   if (!result) {
     throw new Error(`No data available for ${symbol}`);
   }
 
-  return normalizeStockData(result, symbol);
+  return normalizeChartData(result, symbol);
 }
 
-function normalizeStockData(raw, symbol) {
-  const price = raw.price || {};
-  const summary = raw.summaryDetail || {};
-  const keyStats = raw.defaultKeyStatistics || {};
-  const financial = raw.financialData || {};
+function normalizeChartData(result, symbol) {
+  const meta = result.meta || {};
+  const quotes = result.indicators?.quote?.[0] || {};
 
-  const isCrypto = price.quoteType === 'CRYPTOCURRENCY';
+  const isCrypto = meta.instrumentType === 'CRYPTOCURRENCY';
+
+  const previousClose = meta.chartPreviousClose ?? null;
+  const currentPrice = meta.regularMarketPrice ?? null;
+  const dayChange = (currentPrice != null && previousClose != null)
+    ? currentPrice - previousClose
+    : null;
+  const dayChangePercent = (dayChange != null && previousClose)
+    ? dayChange / previousClose
+    : null;
 
   return {
     symbol,
-    name: price.longName || price.shortName || symbol,
-    quoteType: price.quoteType,
+    name: meta.longName || meta.shortName || symbol,
+    quoteType: meta.instrumentType === 'CRYPTOCURRENCY' ? 'CRYPTOCURRENCY' : 'EQUITY',
     isCrypto,
-    currency: price.currency || 'USD',
+    currency: meta.currency || 'USD',
 
-    currentPrice: price.regularMarketPrice?.raw ?? financial.currentPrice?.raw ?? null,
-    dayChange: price.regularMarketChange?.raw ?? null,
-    dayChangePercent: price.regularMarketChangePercent?.raw ?? null,
-    dayHigh: price.regularMarketDayHigh?.raw ?? null,
-    dayLow: price.regularMarketDayLow?.raw ?? null,
-    volume: price.regularMarketVolume?.raw ?? null,
+    currentPrice,
+    previousClose,
+    dayChange,
+    dayChangePercent,
+    dayHigh: meta.regularMarketDayHigh ?? null,
+    dayLow: meta.regularMarketDayLow ?? null,
+    volume: meta.regularMarketVolume ?? null,
 
-    trailingPE: summary.trailingPE?.raw ?? null,
-    forwardPE: summary.forwardPE?.raw ?? keyStats.forwardPE?.raw ?? null,
-    priceToSales: summary.priceToSalesTrailing12Months?.raw ?? null,
-    priceToBook: keyStats.priceToBook?.raw ?? null,
-    pegRatio: keyStats.pegRatio?.raw ?? null,
+    fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh ?? null,
+    fiftyTwoWeekLow: meta.fiftyTwoWeekLow ?? null,
 
-    marketCap: price.marketCap?.raw ?? null,
-    enterpriseValue: keyStats.enterpriseValue?.raw ?? null,
-    fiftyTwoWeekHigh: summary.fiftyTwoWeekHigh?.raw ?? null,
-    fiftyTwoWeekLow: summary.fiftyTwoWeekLow?.raw ?? null,
-    beta: summary.beta?.raw ?? null,
+    // These fields aren't available from v8 chart, set to null
+    trailingPE: null,
+    forwardPE: null,
+    priceToSales: null,
+    priceToBook: null,
+    pegRatio: null,
+    marketCap: null,
+    enterpriseValue: null,
+    beta: null,
+    trailingEps: null,
+    forwardEps: null,
+    profitMargins: null,
+    operatingMargins: null,
+    returnOnEquity: null,
+    revenueGrowth: null,
+    debtToEquity: null,
+    freeCashflow: null,
+    dividendYield: null,
+    circulatingSupply: null,
+    recommendationKey: null,
 
-    trailingEps: keyStats.trailingEps?.raw ?? null,
-    forwardEps: keyStats.forwardEps?.raw ?? null,
-    profitMargins: financial.profitMargins?.raw ?? null,
-    operatingMargins: financial.operatingMargins?.raw ?? null,
-    returnOnEquity: financial.returnOnEquity?.raw ?? null,
-    revenueGrowth: financial.revenueGrowth?.raw ?? null,
-    debtToEquity: financial.debtToEquity?.raw ?? null,
-    freeCashflow: financial.freeCashflow?.raw ?? null,
-    dividendYield: summary.dividendYield?.raw ?? null,
-
-    circulatingSupply: summary.circulatingSupply?.raw ?? null,
-
-    recommendationKey: financial.recommendationKey ?? null,
+    // Chart data for sparkline
+    chartPrices: quotes.close?.filter((v) => v != null) || [],
   };
 }
