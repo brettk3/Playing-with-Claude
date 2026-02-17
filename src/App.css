@@ -2,14 +2,60 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  position: relative;
 }
 
 .mainContent {
   flex: 1;
   overflow-y: auto;
   background: var(--bg-primary);
+  min-width: 0;
 }
 
+.chatSidebar {
+  width: 340px;
+  min-width: 340px;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.chatToggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(41, 98, 255, 0.3);
+  transition: all 0.2s;
+  z-index: 100;
+}
+
+.chatToggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(41, 98, 255, 0.4);
+}
+
+.chatToggleActive {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  right: 356px;
+}
+
+.chatToggleActive:hover {
+  color: var(--text-primary);
+}
+
+/* Welcome State */
 .welcomeState {
   display: flex;
   flex-direction: column;
@@ -21,25 +67,62 @@
 }
 
 .welcomeIcon {
-  margin-bottom: 24px;
-  opacity: 0.25;
+  margin-bottom: 20px;
+  opacity: 0.2;
   color: var(--text-muted);
 }
 
 .welcomeState h2 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .welcomeState p {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
+}
+
+@media (max-width: 1024px) {
+  .chatSidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .chatToggleActive {
+    right: 356px;
+  }
 }
 
 @media (max-width: 768px) {
   .app {
     flex-direction: column;
+  }
+
+  .chatSidebar {
+    width: 100%;
+    min-width: 100%;
+    height: 50vh;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .chatToggle {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .chatToggleActive {
+    right: 16px;
+    bottom: calc(50vh + 16px);
   }
 }

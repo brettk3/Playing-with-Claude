@@ -1,14 +1,18 @@
 const MODEL = 'llama-3.3-70b-versatile';
 
-export async function groqChat(prompt, { temperature = 0.7 } = {}) {
+export async function groqChat(messages, { temperature = 0.7, max_tokens = 1024 } = {}) {
+  const formattedMessages = Array.isArray(messages)
+    ? messages
+    : [{ role: 'user', content: messages }];
+
   const res = await fetch('/api/groq/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: MODEL,
       temperature,
-      max_tokens: 1024,
-      messages: [{ role: 'user', content: prompt }],
+      max_tokens,
+      messages: formattedMessages,
     }),
   });
 

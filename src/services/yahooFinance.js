@@ -1,3 +1,12 @@
+const CHART_CONFIGS = {
+  '1D': { interval: '5m', range: '1d' },
+  '1W': { interval: '15m', range: '5d' },
+  '1M': { interval: '1h', range: '1mo' },
+  '3M': { interval: '1d', range: '3mo' },
+  '1Y': { interval: '1d', range: '1y' },
+  'ALL': { interval: '1wk', range: 'max' },
+};
+
 function getBaseUrl() {
   if (import.meta.env.DEV) {
     return '/api/yahoo';
@@ -5,16 +14,19 @@ function getBaseUrl() {
   return 'https://corsproxy.io/?url=' + encodeURIComponent('https://query2.finance.yahoo.com');
 }
 
+async function yahooFetch(url) {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`HTTP ${res.status}`);
+  }
+  return res.json();
+}
+
 export async function fetchQuoteSummary(symbol) {
   const base = getBaseUrl();
   const url = `${base}/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5d`;
 
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch data for ${symbol} (HTTP ${res.status})`);
-  }
-
-  const json = await res.json();
+  const json = await yahooFetch(url);
 
   if (json.chart?.error) {
     throw new Error(json.chart.error.description || `No data for ${symbol}`);
@@ -26,6 +38,29 @@ export async function fetchQuoteSummary(symbol) {
   }
 
   return normalizeChartData(result, symbol);
+}
+
+export async function fetchChartData(symbol, period = '1M') {
+  const config = CHART_CONFIGS[period] || CHART_CONFIGS['1M'];
+  const base = getBaseUrl();
+  const url = `${base}/v8/finance/chart/${encodeURIComponent(symbol)}?interval=${config.interval}&range=${config.range}`;
+
+  const json = await yahooFetch(url);
+
+  const result = json.chart?.result?.[0];
+  if (!result) return [];
+
+  const timestamps = result.timestamp || [];
+  const quotes = result.indicators?.quote?.[0] || {};
+
+  return timestamps.map((ts, i) => ({
+    time: ts,
+    open: quotes.open?.[i] ?? null,
+    high: quotes.high?.[i] ?? null,
+    low: quotes.low?.[i] ?? null,
+    close: quotes.close?.[i] ?? null,
+    volume: quotes.volume?.[i] ?? null,
+  })).filter(d => d.close != null);
 }
 
 function normalizeChartData(result, symbol) {
@@ -61,13 +96,12 @@ function normalizeChartData(result, symbol) {
     fiftyTwoWeekHigh: meta.fiftyTwoWeekHigh ?? null,
     fiftyTwoWeekLow: meta.fiftyTwoWeekLow ?? null,
 
-    // These fields aren't available from v8 chart, set to null
+    marketCap: null,
     trailingPE: null,
     forwardPE: null,
     priceToSales: null,
     priceToBook: null,
     pegRatio: null,
-    marketCap: null,
     enterpriseValue: null,
     beta: null,
     trailingEps: null,
@@ -82,7 +116,6 @@ function normalizeChartData(result, symbol) {
     circulatingSupply: null,
     recommendationKey: null,
 
-    // Chart data for sparkline
     chartPrices: quotes.close?.filter((v) => v != null) || [],
   };
 }
