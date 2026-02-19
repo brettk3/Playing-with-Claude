@@ -1,0 +1,86 @@
+.thesis {
+  padding: 100px 0;
+  background: var(--navy);
+}
+
+.header {
+  max-width: 600px;
+  margin-bottom: 64px;
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 60px;
+}
+
+.pillar {
+  padding: 44px 40px;
+  background: var(--navy-mid);
+  transition: background 0.2s;
+}
+
+.pillar:hover {
+  background: var(--navy-light);
+}
+
+.pillarNum {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  margin-bottom: 20px;
+  font-family: var(--font-sans);
+}
+
+.pillarTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+
+.pillarDesc {
+  font-size: 0.9375rem;
+  color: var(--gray);
+  line-height: 1.8;
+}
+
+.quote {
+  border-left: 2px solid var(--gold);
+  padding: 8px 0 8px 32px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.quoteText {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+.quoteCite {
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .pillars {
+    grid-template-columns: 1fr;
+  }
+  .pillar {
+    padding: 32px 24px;
+  }
+}
