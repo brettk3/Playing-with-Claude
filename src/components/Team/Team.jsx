@@ -11,13 +11,12 @@ const TEAM = [
     ],
   },
   {
-    initials: 'C',
-    name: 'Chase',
+    initials: 'CW',
+    name: 'Chase Waxman',
     title: 'Co-Founder & General Partner',
-    bio: 'Chase is a seasoned entrepreneur and investor with extensive experience across technology, finance, and consumer markets. His track record of building companies from inception to scale gives him a unique perspective on what makes a breakthrough business. Chase is known for his pattern recognition, market instincts, and deep commitment to the founders he backs.',
+    bio: 'Chase is a serial entrepreneur who launched his first business — Heat Corner, a worldwide sneaker, streetwear, and collectible resale operation — at age 12, compounding a $130 investment into a $30,000 portfolio over a decade. Now an MBA candidate at Babson College (Corporate Entrepreneurship), Chase brings that same founder DNA to venture investing. At ElevateBio he leads Business Development Operations, where he has sharpened expertise in pipeline management, deal progression, and relationship-driven partnerships. An active personal investor across equities, blockchain, SaaS, and AI, Chase combines a true operator\'s instincts with relentless hustle and an infectious energy that founders trust.',
     links: [
-      { label: 'LinkedIn', href: '#' },
-      { label: 'Twitter', href: '#' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/chase-waxman' },
     ],
   },
 ];
