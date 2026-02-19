@@ -9,7 +9,7 @@ const NAV_LINKS = [
   { label: 'Contact', href: '#contact' },
 ];
 
-export default function Navbar() {
+export default function Navbar({ currentView = 'home', onViewChange }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -19,16 +19,23 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    if (onViewChange) onViewChange('home');
+    setMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <nav className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
       <div className={`container ${styles.inner}`}>
-        <a href="#" className={styles.logo}>
+        <a href="#" className={styles.logo} onClick={handleLogoClick}>
           <span className={styles.logoMark}>BC</span>
           <span className={styles.logoText}>Ventures</span>
         </a>
 
         <ul className={`${styles.links} ${menuOpen ? styles.open : ''}`}>
-          {NAV_LINKS.map((link) => (
+          {currentView === 'home' && NAV_LINKS.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
@@ -40,10 +47,24 @@ export default function Navbar() {
             </li>
           ))}
           <li>
-            <a href="#contact" className={styles.cta} onClick={() => setMenuOpen(false)}>
-              LP Inquiries
-            </a>
+            <button
+              className={`${styles.dashboardBtn} ${currentView === 'lending' ? styles.dashboardBtnActive : ''}`}
+              onClick={() => {
+                onViewChange && onViewChange(currentView === 'lending' ? 'home' : 'lending');
+                setMenuOpen(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              {currentView === 'lending' ? '← Back to Site' : 'Lending Dashboard'}
+            </button>
           </li>
+          {currentView === 'home' && (
+            <li>
+              <a href="#contact" className={styles.cta} onClick={() => setMenuOpen(false)}>
+                LP Inquiries
+              </a>
+            </li>
+          )}
         </ul>
 
         <button
