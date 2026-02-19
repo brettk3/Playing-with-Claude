@@ -3,12 +3,11 @@ import styles from './Team.module.css';
 const TEAM = [
   {
     initials: 'BK',
-    name: 'Brett K.',
+    name: 'Brett Kessler',
     title: 'Co-Founder & General Partner',
-    bio: 'Brett is an operator-turned-investor with a background in building and scaling technology companies. Before founding BC Ventures, he led growth at multiple venture-backed startups, gaining firsthand insight into what founders need at the earliest stages. He brings strategic vision, a deep operator network, and relentless founder advocacy to every investment.',
+    bio: 'Brett is an MBA candidate at Babson College (Corporate Finance) and a Senior Associate at Grant Thornton LLP, where he specializes in operational due diligence, private market valuation, and AI-augmented financial analysis. Armed with a BS in Information Science from the University of Maryland and certifications in Wall Street Prep Financial Modeling and Bloomberg Market Concepts, Brett brings institutional rigor to early-stage investing. His deep focus on risk assessment, data-driven assurance, and sector research across AI, SaaS, and blockchain gives him a differentiated lens for evaluating technology companies at the frontier.',
     links: [
-      { label: 'LinkedIn', href: '#' },
-      { label: 'Twitter', href: '#' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/brett-kessler' },
     ],
   },
   {
@@ -32,8 +31,8 @@ export default function Team() {
           <h2 className="section-title">Partners</h2>
           <div className="gold-divider" />
           <p className="section-subtitle">
-            Two operators who have lived the founder journey and now dedicate
-            themselves to supporting the next generation of builders.
+            A finance and technology duo combining institutional due diligence
+            discipline with a passion for backing the next generation of category-defining companies.
           </p>
         </div>
 

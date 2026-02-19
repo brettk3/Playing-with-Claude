@@ -32,14 +32,14 @@ export default function Contact() {
                 <div className={styles.infoIcon}>✉</div>
                 <div>
                   <div className={styles.infoLabel}>Email</div>
-                  <div className={styles.infoValue}>hello@bcventures.vc</div>
+                  <div className={styles.infoValue}>brett.kessler22@gmail.com</div>
                 </div>
               </div>
               <div className={styles.infoItem}>
                 <div className={styles.infoIcon}>◎</div>
                 <div>
                   <div className={styles.infoLabel}>Location</div>
-                  <div className={styles.infoValue}>United States</div>
+                  <div className={styles.infoValue}>Boston, MA</div>
                 </div>
               </div>
             </div>

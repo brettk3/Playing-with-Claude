@@ -25,18 +25,19 @@ export default function About() {
         <div className={styles.grid}>
           <div className={styles.left}>
             <p className="section-label">Who We Are</p>
-            <h2 className="section-title">Built by Operators,<br />Backed by Conviction</h2>
+            <h2 className="section-title">Built by Finance &<br />Tech Professionals</h2>
             <div className="gold-divider" />
             <p className="section-subtitle">
-              BC Ventures was founded by Brett and Chase — two operators-turned-investors
-              who have built and scaled companies from the ground up. We understand
-              what it takes to go from zero to one, and we back founders with the
-              same tenacity we applied to our own journeys.
+              BC Ventures was founded by Brett and Chase — a duo combining deep
+              institutional finance expertise with entrepreneurial vision. We bring
+              the analytical rigor of Wall Street with the forward-thinking mindset
+              of Silicon Valley to every investment decision.
             </p>
             <p className={styles.bodyText}>
               We invest at the pre-seed and seed stages when conviction matters most
-              and risk is highest. Our capital comes with real partnership — strategic
-              guidance, a curated network, and the hard truths that help companies succeed.
+              and risk is highest. Our background in due diligence, private market
+              valuation, and AI-augmented research means we do the work others skip —
+              and we back founders who do the same.
             </p>
           </div>
 
