@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/Playing-with-Claude/',
   server: {
     proxy: {
       '/api/yahoo': {
